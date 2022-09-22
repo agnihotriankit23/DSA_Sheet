@@ -10,26 +10,22 @@ public:
         //    mp[s[i]]++;
         // }
        
+        int curr=0;
         
-        
-        for(int i=0;i<s.size();i++){
-           
-            for(int j=i;j<s.size();j++){
-                    if(mp[s[j]]>=1){
-                        int curr = mp.size();
-                        ans=max(ans,curr);
-                        mp.clear();
-                        break;
-                    }else{
-                        mp[s[j]]++;
-                    }
-            }
-            int curr = mp.size();
-                        ans=max(ans,curr);
-              mp.clear();
+       for(int i = 0 ; i < s.size() ; i++) {
+        if(mp[s[i]]) {
+            i = mp[s[i]] - 1 ; 
+            mp.clear();
+            ans = max(ans,curr);
+            curr = 0;
             
-         }
-         int curr = mp.size();
+        }else {
+            mp[s[i]] = i + 1 ; 
+            curr++;
+        }
+        
+    }
+        
                ans=max(ans,curr);
         return ans;
     }
