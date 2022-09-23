@@ -12,41 +12,72 @@ class Solution {
 public:
     ListNode* mergeTwoLists(ListNode* list1, ListNode* list2) {
        
-        ListNode* temp1 = list1;
-        ListNode* temp2 = list2;
+//         ListNode* temp1 = list1;
+//         ListNode* temp2 = list2;
        
       
         
-         ListNode* ans = new ListNode();
-        ListNode* temp=ans;
-        while(temp1!=NULL && temp2!=NULL){
-            if(temp1->val==temp2->val){
-               temp->next = temp1;
-                temp1=temp1->next;
-                temp=temp->next;
-                temp->next=temp2;
-                temp2=temp2->next;
-                    temp=temp->next;;
-            }else if(temp1->val > temp2->val){
-                temp->next=temp2;
-                temp2=temp2->next;
-                temp=temp->next;
-            }else{
-                 temp->next=temp1;
-                temp1=temp1->next;
-                temp=temp->next;
+//          ListNode* ans = new ListNode();
+//         ListNode* temp=ans;
+//         while(temp1!=NULL && temp2!=NULL){
+//             if(temp1->val==temp2->val){
+//                temp->next = temp1;
+//                 temp1=temp1->next;
+//                 temp=temp->next;
+//                 temp->next=temp2;
+//                 temp2=temp2->next;
+//                     temp=temp->next;;
+//             }else if(temp1->val > temp2->val){
+//                 temp->next=temp2;
+//                 temp2=temp2->next;
+//                 temp=temp->next;
+//             }else{
+//                  temp->next=temp1;
+//                 temp1=temp1->next;
+//                 temp=temp->next;
+//             }
+//         }
+//         while(temp1!=NULL){
+//             temp->next=temp1;
+//             temp1=temp1->next;
+//             temp=temp->next;
+//         }
+//         while(temp2!=NULL){
+//             temp->next=temp2;
+//             temp2=temp2->next;
+//             temp=temp->next;
+//         }
+//         return ans->next;
+        ListNode* l1 = list1;
+        ListNode* l2 = list2;
+        if(l1 == NULL) return l2; 
+
+        // when list2 is empty then our output 
+        // will be same as list1
+        if(l2 == NULL) return l1;
+
+        // pointing l1 and l2 to smallest and greatest one
+        if(l1->val > l2->val) std::swap(l1,l2);
+
+        // act as head of resultant merged list
+        ListNode* res = l1;
+
+        while(l1 != NULL && l2 != NULL) {
+ 
+            ListNode* temp = NULL;
+
+            while(l1 != NULL && l1->val <= l2->val) {
+
+                temp = l1;//storing last sorted node  
+                l1 = l1->next;
             }
+
+            // link previous sorted node with 
+            // next larger node in list2
+            temp->next = l2;
+            std::swap(l1,l2);
         }
-        while(temp1!=NULL){
-            temp->next=temp1;
-            temp1=temp1->next;
-            temp=temp->next;
-        }
-        while(temp2!=NULL){
-            temp->next=temp2;
-            temp2=temp2->next;
-            temp=temp->next;
-        }
-        return ans->next;
+
+        return res;
     }
 };
