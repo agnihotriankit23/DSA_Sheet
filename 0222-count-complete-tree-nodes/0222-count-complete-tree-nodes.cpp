@@ -11,22 +11,34 @@
  */
 class Solution {
 public:
-    void solve(int &ans, TreeNode* root)
-    {
-        if(root== NULL)
-        {
-            return;
-        }
-        ans++;
-        
-        solve(ans,root->left);
-        solve(ans,root->right);
-        
-    }
-    
     int countNodes(TreeNode* root) {
-        int ans = 0;
-        solve(ans,root);
-        return ans;
+        if(!root)
+        {
+            return 0;
+        }
+        
+        int left_count = 1;
+        TreeNode* l = root->left;
+        while(l)
+        {
+            left_count++;
+            l= l->left;
+        }
+        int right_count = 1;
+        TreeNode* r = root->right;
+        while(r)
+        {
+            right_count++;
+            r = r->right;
+        }
+        
+        if(left_count == right_count)
+        {
+            return pow(2,left_count) -1;
+            
+        }
+        
+        return 1 +  countNodes(root->left) + countNodes(root->right);
+        
     }
 };
