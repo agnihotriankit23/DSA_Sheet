@@ -3,6 +3,84 @@
 using namespace std;
 
 // } Driver Code Ends
+
+class DisjointSet{
+vector<int> rank,parent,size;
+
+public:
+
+DisjointSet(int n)
+{
+    rank.resize(n+1,0);
+    parent.resize(n+1);
+    size.resize(n+1);
+    for(int i=0;i<n;i++)
+    {
+        size[i]=1;
+        parent[i]=i;
+    }
+    
+}
+
+int findUltParent(int node)
+{
+    if(parent[node] == node)
+    return node;
+
+    return parent[node]= findUltParent(parent[node]); // This is Path Compression
+}
+
+void  UnionByRank(int u, int v)
+{
+    int ult_pu = findUltParent(u);
+    int ult_pv = findUltParent(v);
+
+    if(ult_pu == ult_pv)
+    return ; 
+
+    if( rank[ult_pu] < rank[ult_pv])
+    {
+        parent[ult_pu] = ult_pv;
+    }
+    else if(rank[ult_pu] > rank[ult_pv])
+    {
+        parent[ult_pv] = ult_pu;
+    }
+    else
+    {
+        parent[ult_pv] = ult_pu;
+        rank[ult_pu]++;
+    }
+}
+
+void  UnionBySize(int u, int v)
+{
+    int ult_pu = findUltParent(u);
+    int ult_pv = findUltParent(v);
+
+    if(ult_pu == ult_pv)
+    return ; 
+
+    if( size[ult_pu] < size[ult_pv])
+    {
+        parent[ult_pu] = ult_pv;
+        size[ult_pv]+=size[ult_pu];
+    }
+    else if(size[ult_pu] > size[ult_pv])
+    {
+        parent[ult_pv] = ult_pu;
+        size[ult_pu]+=size[ult_pv];
+        
+    }
+    else
+    {
+        parent[ult_pv] = ult_pu;
+        size[ult_pu]+=size[ult_pv];
+    }
+}
+
+
+};
 class Solution
 {
 	public:
@@ -10,44 +88,42 @@ class Solution
     int spanningTree(int V, vector<vector<int>> adj[])
     {
         // code here
-        priority_queue <pair<int, pair<int,int> >, vector<pair<int, pair<int,int> >>, greater<pair<int, pair<int,int> >> > pq;
-        pq.push({ 0 , { 0,-1}});
+        set< pair< int ,  pair<int,int> > > st;
         
-        vector<int> vis(V,0);
-        int sum = 0 ;
-        vector< pair<int,int> > MST;
-        while(!pq.empty())
+        for(int i = 0 ; i<V ; i++)
         {
-            int node = pq.top().second.first;
-            int parent = pq.top().second.second;
-            int wt = pq.top().first;
-            
-            pq.pop();
-            
-            if(parent!= -1 && vis[node]==0)
+            for(auto e : adj[i])
             {
-                sum+= wt;
-                MST.push_back({parent,node});
+                st.insert( { e[1] , {i, e[0] } } );
             }
-            if(vis[node]==1) continue;
-            vis[node] = 1;
-           
-            for(auto e : adj[node])
-            
-            {
-                //cout<<node<<" "<<e[0]<<" "<<e[1]<<"\n";
-                if(vis[e[0]]==0)
-                {
-                    pq.push({e[1], {e[0],node}});
-                }
-            }
-            
+        }
         
+        int ans = 0;
+        
+        DisjointSet ds(V);
+        
+        while(st.size()!=0)
+        {
+            pair< int ,  pair<int,int> > p = *(st.begin());
+            st.erase(p);
+            
+            int u = p.second.first;
+            int v = p.second.second;
+            
+            int ult_pu = ds.findUltParent(u);
+            int ult_pv = ds.findUltParent(v);
+            
+            if(ult_pu == ult_pv)
+            continue;
+            
+            ds.UnionBySize(u,v);
+            ans+=p.first;
             
         }
         
+        return ans;
         
-        return sum;
+        
     }
 };
 
